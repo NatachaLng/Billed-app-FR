@@ -13,7 +13,7 @@ export default class {
     if (iconEye) iconEye.forEach(icon => {
       icon.addEventListener('click', (e) => this.handleClickIconEye(icon))
     })
-    new Logout({ document, onNavigate, localStorage })
+    new Logout({ document, onNavigate, locaStorage })
   }
 
   handleClickNewBill = e => {
@@ -30,22 +30,22 @@ export default class {
   // not need to cover this function by tests
   getBills = () => {
     const userEmail = localStorage.getItem('user') ?
-      JSON.parse(localStorage.getItem('user')).email : ""
+        JSON.parse(localStorage.getItem('user')).email : ""
     if (this.firestore) {
       return this.firestore
-      .bills()
-      .get()
-      .then(snapshot => {
-        const bills = snapshot.docs
-          .map(doc => ({
-            ...doc.data(),
-            date: formatDate(doc.data().date),
-            status: formatStatus(doc.data().status)
-          }))
-          .filter(bill => bill.email === userEmail)
-        return bills
-      })
-      .catch(error => error)
+          .bills()
+          .get()
+          .then(snapshot => {
+            const bills = snapshot.docs
+                .map(doc => ({
+                  ...doc.data(),
+                  date: formatDate(doc.data().date),
+                  status: formatStatus(doc.data().status)
+                }))
+                .filter(bill => bill.email === userEmail)
+            return bills
+          })
+          .catch(error => error)
     }
   }
 }
