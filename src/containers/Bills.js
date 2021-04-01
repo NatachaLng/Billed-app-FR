@@ -13,7 +13,7 @@ export default class {
     if (iconEye) iconEye.forEach(icon => {
       icon.addEventListener('click', (e) => this.handleClickIconEye(icon))
     })
-    new Logout({ document, localStorage, onNavigate })
+    new Logout({ document, onNavigate, localStorage })
   }
 
   handleClickNewBill = e => {
