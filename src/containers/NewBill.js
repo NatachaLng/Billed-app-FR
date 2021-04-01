@@ -14,7 +14,7 @@ export default class NewBill {
     file.addEventListener("change", this.handleChangeFile);
     this.fileUrl = null;
     this.fileName = null;
-    new Logout({ document, onNavigate, localStorage });
+    new Logout({document, onNavigate, localStorage});
   }
   handleChangeFile = (e) => {
     const file = this.document.querySelector(`input[data-testid="file"]`)
@@ -44,7 +44,6 @@ export default class NewBill {
     e.preventDefault();
 
     if (this.fileName === "invalid") return;
-
     const email = JSON.parse(localStorage.getItem("user")).email;
     const bill = {
       email,
