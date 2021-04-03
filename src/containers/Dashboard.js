@@ -144,7 +144,6 @@ export default class {
 
   handleShowTickets(e, bills, index) {
     if (this.index === undefined || this.index !== index) this.index = index;
-
     if (this.listsState[`isOpen${index}`]) {
       $(`#arrow-icon${this.index}`).css({ transform: "rotate(90deg)" });
       $(`#status-bills-container${this.index}`).html("");
@@ -152,28 +151,20 @@ export default class {
     } else {
       $(`#arrow-icon${this.index}`).css({ transform: "rotate(0deg)" });
       $(`#status-bills-container${this.index}`).html(
-          cards(filteredBills(bills, getStatus(this.index)))
-      );
+          cards(filteredBills(bills, getStatus(this.index))));
       this.listsState[`isOpen${index}`] = true;
     }
-
     bills.forEach((bill) => {
       $(`#open-bill${bill.id}`).click((e) =>
-          this.handleEditTicket(e, bill, bills)
-      );
-    });
-
+          this.handleEditTicket(e, bill, bills));});
     if (
         !this.listsState.isOpen1 &&
         !this.listsState.isOpen2 &&
         !this.listsState.isOpen3
     ) {
-      $(".dashboard-right-container div").html(`
-        <div id="big-billed-icon"> ${BigBilledIcon} </div>
-      `);
+      $(".dashboard-right-container div").html(`<div id="big-billed-icon"> ${BigBilledIcon} </div>`);
       $(".vertical-navbar").css({ height: "120vh" });
     }
-
     return bills;
   }
 
