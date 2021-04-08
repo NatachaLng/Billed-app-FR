@@ -70,7 +70,7 @@ describe("Given I am connected as an employee", () => {
       expect(message).toBeTruthy()
     })
   })
-  
+
   describe('When I am connected as an employee and I am on the bills page', () => {
     describe('When I click on the Make New Bill button', () => {
       test('A new bill modal should open', () => {
