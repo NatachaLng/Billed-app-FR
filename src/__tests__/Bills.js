@@ -1,6 +1,13 @@
-import { screen } from "@testing-library/dom"
+import { fireEvent, screen } from "@testing-library/dom"
 import BillsUI from "../views/BillsUI.js"
 import { bills } from "../fixtures/bills.js"
+import '@testing-library/jest-dom/extend-expect'
+import Bills  from "../containers/Bills.js"
+import { ROUTES } from "../constants/routes"
+import firebase from "../__mocks__/firebase"
+import { localStorageMock } from "../__mocks__/localStorage.js"
+import userEvent from '@testing-library/user-event'
+
 
 describe("Given I am connected as an employee", () => {
   describe("When I am on Bills Page", () => {
@@ -30,6 +37,33 @@ describe("Given I am connected as an employee", () => {
       const html = BillsUI({error: 'some error message'})
       document.body.innerHTML = html
       expect(screen.getAllByText('Erreur')).toBeTruthy()
+    })
+  })
+})
+
+describe('When I am connected as an employee and I am on the bills page', () => {
+  describe('When I click on the Make New Bill button', () => {
+    test('A new bill modal should open', () => {
+      Object.defineProperty(window, 'localStorage', {value: localStorageMock})
+      window.localStorage.setItem('user', JSON.stringify({
+        type: 'Employee'
+      }))
+      const html = BillsUI({data: []})
+      document.body.innerHTML = html
+      const onNavigate = (pathname) => {
+        document.body.innerHTML = ROUTES({pathname})
+      }
+      const firestore = null
+      const bill = new Bills({document, onNavigate, firestore, localStorage: window.localstorage})
+
+      const handleClickNewBill = jest.fn(bill.handleClickNewBill)
+      const newBillIcon = screen.getByTestId('btn-new-bill')
+      newBillIcon.addEventListener('click', handleClickNewBill)
+      userEvent.click(newBillIcon)
+      expect(handleClickNewBill).toHaveBeenCalled()
+
+      const modal = screen.getByTestId('form-new-bill')
+      expect(modal).toBeTruthy()
     })
   })
 })
