@@ -40,6 +40,40 @@ describe("Given I am connected as an employee", () => {
   })
 })
 
+describe("Given I am connected as an employee", () => {
+  describe("When I am on NewBill Page and I submit the form width an image (jpg, jpeg, png)", () => {
+    test("Then it should create a new bill", () => {
+      const onNavigate = (pathname) => {
+        document.body.innerHTML = ROUTES({ pathname });
+      };
+      Object.defineProperty(window, "localStorage", {
+        value: localStorageMock,
+      });
+      window.localStorage.setItem(
+          "user",
+          JSON.stringify({
+            type: "Employee",
+          })
+      );
+      const firestore = null;
+      const html = NewBillUI();
+      document.body.innerHTML = html;
+
+      const newBill = new NewBill({
+        document,
+        onNavigate,
+        firestore,
+        localStorage: window.localStorage,
+      });
+      const handleSubmit = jest.fn(newBill.handleSubmit);
+      const submitBtn = screen.getByTestId("form-new-bill");
+      submitBtn.addEventListener("submit", handleSubmit);
+      fireEvent.submit(submitBtn);
+      expect(handleSubmit).toHaveBeenCalled();
+    })
+  })
+})
+
 //POST integration test
 describe("Given I am a user connected as Employee", () => {
   describe("When I create a new bill", () => {
