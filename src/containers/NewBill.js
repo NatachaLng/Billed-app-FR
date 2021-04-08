@@ -16,30 +16,22 @@ export default class NewBill {
     this.fileName = null;
     new Logout({document, onNavigate, localStorage});
   }
-  handleChangeFile = (e) => {
-    const file = this.document.querySelector(`input[data-testid="file"]`)
-        .files[0];
-    const filePath = e.target.value.split(/\\/g);
-    const fileName = filePath[filePath.length - 1];
-
-    const extensionCheck = /(png|jpg|jpeg)/g;
-    const extension = fileName.split(".").pop();
-    const matchExtension = extension.toLowerCase().match(extensionCheck);
-
-    this.handleFirestoreStorage(fileName, file, matchExtension);
-  };
-  handleFirestoreStorage = (fileName, file, matchExtension) => {
-    if (this.firestore) {
-      this.firestore.storage
-          .ref(`justificatifs/${fileName}`)
-          .put(file)
-          .then((snapshot) => snapshot.ref.getDownloadURL())
-          .then((url) => {
-            this.fileUrl = url;
-            this.fileName = matchExtension ? fileName : "invalid";
-          });
+  falseAlert = e => {
+    window.alert("Choose a jpg, jpeg, or png format")
+  }
+  handleChangeFile = e => {
+    const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
+    const filePath = file.name.split(/\\/g)
+    const fileName = filePath[filePath.length-1]
+    const ext = file.name.slice((file.name.lastIndexOf(".") - 1 >>> 0) + 2).toLowerCase()
+    const acceptedFormat = ['jpg', 'png', 'jpeg']
+    if (acceptedFormat.includes(ext)) {
+      this.handleFile(file, fileName)
+    } else {
+      this.document.querySelector(`input[data-testid="file"]`).value = ""
+      this.falseAlert()
     }
-  };
+  }
   handleSubmit = (e) => {
     e.preventDefault();
 
@@ -80,4 +72,18 @@ export default class NewBill {
           .catch((error) => error);
     }
   };
+  handleFile = (file, fileName) => {
+    if (this.firestore) {
+      this.firestore
+          .storage
+          .ref(`justificatifs/${fileName}`)
+          .put(file)
+          .then(snapshot => snapshot.ref.getDownloadURL())
+          .then(url => {
+            this.fileUrl = url
+            this.fileName = fileName
+          })
+          .catch(error => error)
+    }
+  }
 }
