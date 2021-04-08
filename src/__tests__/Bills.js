@@ -67,3 +67,23 @@ describe('When I am connected as an employee and I am on the bills page', () => 
     })
   })
 })
+
+describe('When I click on the Eye Icon button', () => {
+  test('Then a modal should open', async () => {
+    const html = BillsUI({data: bills})
+    document.body.innerHTML = html
+    const onNavigate = (pathname) => {
+      document.body.innerHTML = ROUTES({pathname})
+    }
+    const bill = new Bills({document, onNavigate, firestore: null, localStorage: window.localStorage,})
+    $.fn.modal = jest.fn()
+    const button = screen.getAllByTestId('icon-eye')[0]
+    const handleClickIconEye = jest.fn((e) => {
+      e.preventDefault()
+      bill.handleClickIconEye(button)
+    })
+    button.addEventListener('click', handleClickIconEye)
+    fireEvent.click(button)
+    expect(handleClickIconEye).toHaveBeenCalled()
+  })
+})
