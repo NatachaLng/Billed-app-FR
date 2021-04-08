@@ -6,42 +6,36 @@ import { ROUTES } from "../constants/routes"
 import firebase from "../__mocks__/firebase"
 import BillsUI from "../views/BillsUI.js"
 
+jest.mock("../app/Firestore");
+
 describe("Given I am connected as an employee", () => {
-  describe("When I am on NewBill Page", () => {
-    test("cover handleChangeFile method", () => {
-      const html = NewBillUI()
-      document.body.innerHTML = html
-      Object.defineProperty(window, 'localStorage', {value: localStorageMock})
-      window.localStorage.setItem('user', JSON.stringify({
-        type: 'Employee',
-        email: 'johndoe@email.com'
-      }))
-      const onNavigate = (pathname) => {
-        document.body.innerHTML = ROUTES({pathname})
-      }
-      const obj = new NewBill({document, onNavigate, firestore: null, localStorage: window.localStorage})
-      const handleChangeFile = jest.fn(obj.handleChangeFile)
-      const file = "test.png"
-      const input_file = screen.getByTestId("file")
-      input_file.addEventListener("input", handleChangeFile)
-      fireEvent.input(input_file, file)
-      expect(handleChangeFile).toHaveBeenCalled()
-    })
-    test("cover handleSubmit method", () => {
-      const html = NewBillUI()
-      document.body.innerHTML = html
-      Object.defineProperty(window, 'localStorage', {value: localStorageMock})
-      window.localStorage.setItem('user', JSON.stringify({
-        type: 'Employee',
-        email: 'johndoe@email.com'
-      }))
-      const onNavigate = (pathname) => {document.body.innerHTML = ROUTES({pathname})}
-      const obj = new NewBill({document, onNavigate, firestore: null, localStorage: window.localStorage})
-      const handleSubmit = jest.fn(obj.handleSubmit)
-      const submitNewBill = screen.getByTestId('form-new-bill')
-      submitNewBill.addEventListener("submit", handleSubmit)
-      fireEvent.submit(submitNewBill)
-      expect(handleSubmit).toHaveBeenCalled()
+  describe("When I am on NewBill Page and I add an image file", () => {
+    test("Then this new file should have been changed in the input file", () => {
+      const onNavigate = (pathname) => {document.body.innerHTML = ROUTES({ pathname });}
+      Object.defineProperty(window, "localStorage", {value: localStorageMock,})
+      window.localStorage.setItem(
+          "user",
+          JSON.stringify({
+            type: "Employee",
+          }))
+      const html = NewBillUI();
+      document.body.innerHTML = html;
+      const newBill = new NewBill({
+        document,
+        onNavigate,
+        firestore: null,
+        localStorage: window.localStorage,
+      });
+      const handleChangeFile = jest.fn(newBill.handleChangeFile);
+      const inputFile = screen.getByTestId("file");
+      inputFile.addEventListener("change", handleChangeFile);
+      fireEvent.change(inputFile, {
+        target: {
+          files: [new File(["image.png"], "image.png", { type: "image/png" })],
+        },
+      })
+      expect(handleChangeFile).toHaveBeenCalled();
+      expect(inputFile.files[0].name).toBe("image.png");
     })
   })
 })
